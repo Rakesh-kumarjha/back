@@ -2,11 +2,22 @@ import Sequelize from "sequelize";
 import sequelize from "../utilities/database.js";
 import randomstring from "randomstring";
 
+const generateUserId = (user) => {
+  // Generate user ID
+  const year = new Date().getFullYear().toString().substr(-2);
+  const random_number = randomstring.generate({
+    length: 3,
+    charset: "numeric",
+  });
+  return `TL${year}${random_number}`;
+};
+
 const User = sequelize.define("user", {
   user_id: {
     type: Sequelize.STRING,
     allowNull: false,
     unique: true,
+    defaultValue: generateUserId,
   },
   first_name: {
     type: Sequelize.STRING,
@@ -30,8 +41,8 @@ const User = sequelize.define("user", {
   },
   region: {
     type: Sequelize.STRING,
-    enum: ["Account_Holder"],
     allowNull: true,
+    values: ["Account_Holder"],
   },
   postal_code: {
     type: Sequelize.STRING,
@@ -109,16 +120,6 @@ const User = sequelize.define("user", {
     type: Sequelize.STRING,
     allowNull: true,
   },
-});
-
-User.beforeCreate((user) => {
-  // Generate user ID
-  const year = new Date().getFullYear().toString().substr(-2);
-  const random_number = randomstring.generate({
-    length: 3,
-    charset: "numeric",
-  });
-  user.user_id = `TL${year}${random_number}`;
 });
 
 export default User;
